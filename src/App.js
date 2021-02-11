@@ -12,11 +12,39 @@ class App extends Component {
     };
   }
 
-  async login() {}
+  componentDidMount(){
+    axios.get('/auth/user').then( res => {
+      this.setState({
+        loggedInUser: res.data
+      })
+    }).catch(err => console.log(err))
+  }
 
-  async signup() {}
+  async login() {
+    let { email, password } = this.state
+    let res = await axios.post('/auth/login', { email, password })
+    this.setState({
+      loggedInUser: res.data,
+      email: '',
+      password: ''
+    })
+  }
 
-  logout() {}
+  async signup() {
+    let { email, password } = this.state
+    let res = await axios.post('/auth/signup', { email, password })
+    this.setState({
+      loggedInUser: res.data, email: '', password: ''
+    })
+  }
+
+  logout() {
+    axios.get('/auth/logout')
+    this.setState({
+      loggedInUser: {}
+    })
+    // this.props.history.push('/')
+  }
 
   render() {
     let { loggedInUser, email, password } = this.state;
@@ -43,8 +71,8 @@ class App extends Component {
           {loggedInUser.email ? (
             <button onClick={() => this.logout()}>Logout</button>
           ) : (
-            <button onClick={() => this.login()}>Login</button>
-          )}
+              <button onClick={() => this.login()}>Login</button>
+            )}
           <button onClick={() => this.signup()}>Sign up</button>
         </div>
 
